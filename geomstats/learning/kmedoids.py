@@ -58,8 +58,13 @@ class RiemannianKMedoids(TransformerMixin, ClusterMixin, BaseEstimator):
 
     def _initialize_medoids(self, distances):
         """Select initial medoids when beginning clustering."""
+        n_samples = len(distances)
+        if self.n_clusters > n_samples:
+            raise ValueError(
+                "The number of clusters cannot exceed the number of samples."
+            )
         if self.init == "random":
-            medoids = gs.random.choice(gs.arange(len(distances)), self.n_clusters)
+            medoids = gs.random.uniform(size=(n_samples,)).argsort()[: self.n_clusters]
         else:
             logging.error("Unknown initialization method.")
 
